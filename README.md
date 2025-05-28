@@ -111,18 +111,3 @@ Você pode visualizar o banco de dados usando o Prisma Studio:
 ```bash
 npx prisma studio
 ```
-
-## 🤝 Contribuindo
-
-Sinta-se à vontade para contribuir com o projeto! Algumas ideias:
-- Adicionar autenticação
-- Implementar sistema de pagamentos
-- Adicionar novos recursos
-
-## 📫 Contato
-
-Se tiver dúvidas ou sugestões, não hesite em entrar em contato!
-
----
-
-Feito com ❤️ usando NestJS e TypeScript
