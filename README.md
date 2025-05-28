@@ -109,5 +109,5 @@ O sistema inclui diversas validações para garantir a integridade dos dados:
 
 Você pode visualizar o banco de dados usando o Prisma Studio:
 ```bash
-npx prisma studio
+npx prisma studio 
 ```
