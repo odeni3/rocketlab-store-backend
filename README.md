@@ -38,7 +38,7 @@ Bem-vindo ao nosso sistema de compras online! Esta é uma API robusta e moderna 
 
 1. **Clone o repositório**
    ```bash
-   git clone [url-do-repositorio]
+   git clone [https://github.com/odeni3/rocketlab-store-backend.git]
    cd backendrocket
    ```
 
