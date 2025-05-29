@@ -22,21 +22,21 @@ export class CreateProductDto {
   description: string;
 
   @ApiProperty({
-    description: 'Preço do produto',
+    description: 'Preço do produto (deve ser maior que zero)',
     example: 999.99,
-    minimum: 0,
+    minimum: 0.01,
   })
   @IsNumber()
-  @Min(0)
+  @Min(0.01, { message: 'O preço deve ser maior que zero' })
   price: number;
 
   @ApiProperty({
-    description: 'Quantidade em estoque',
+    description: 'Quantidade em estoque (deve ser maior que zero)',
     example: 50,
-    minimum: 0,
+    minimum: 1,
   })
   @IsInt()
-  @Min(0)
+  @Min(1, { message: 'O estoque deve ser maior que zero' })
   stock: number;
 
   @ApiProperty({
