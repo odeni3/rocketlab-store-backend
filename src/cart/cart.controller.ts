@@ -88,4 +88,14 @@ export class CartController {
   checkout() {
     return this.cartService.checkout();
   }
+
+  @Get('debug/stock/:productId')
+  @ApiOperation({ summary: 'Debug - Verificar status do estoque de um produto' })
+  @ApiResponse({
+    status: 200,
+    description: 'Status do estoque retornado com sucesso',
+  })
+  debugStock(@Param('productId') productId: string) {
+    return this.cartService.debugStockStatus(productId);
+  }
 } 

@@ -11,6 +11,33 @@ export class CartService {
     private productsService: ProductsService,
   ) {}
 
+  /**
+   * Valida se há estoque suficiente para uma operação
+   */
+  private validateStock(product: any, requestedQuantity: number, operation: string = 'adicionar'): void {
+    if (product.stock < requestedQuantity) {
+      throw new BadRequestException(
+        `Estoque insuficiente para o produto ${product.name}. Disponível: ${product.stock}, tentando ${operation}: ${requestedQuantity}`,
+      );
+    }
+  }
+
+  /**
+   * Método de debug para verificar o status do estoque
+   */
+  async debugStockStatus(productId: string): Promise<any> {
+    const product = await this.productsService.findOne(productId);
+    const cart = await this.getOrCreateActiveCart();
+    const itemInCart = cart.items.find(item => item.productId === productId);
+    
+    return {
+      productName: product.name,
+      currentStock: product.stock,
+      quantityInCart: itemInCart ? itemInCart.quantity : 0,
+      available: product.stock,
+    };
+  }
+
   private async getOrCreateActiveCart(): Promise<Cart> {
     // Procura por um carrinho ativo
     let cart = await this.prisma.cart.findFirst({
@@ -54,30 +81,24 @@ export class CartService {
       );
     }
 
-    if (product.stock < quantity) {
-      throw new BadRequestException(
-        `Estoque insuficiente para o produto ${product.name}. Disponível: ${product.stock}`,
-      );
-    }
-
     // Verifica se o item já existe no carrinho
     const existingItem = cart.items.find(item => item.productId === productId);
 
     if (existingItem) {
+      // Para itens existentes, verifica se há estoque suficiente para a quantidade adicional
+      this.validateStock(product, quantity, 'adicionar');
+
       // Atualiza a quantidade do item existente
       const newQuantity = existingItem.quantity + quantity;
-      
-      if (product.stock < newQuantity) {
-        throw new BadRequestException(
-          `Estoque insuficiente para o produto ${product.name}. Disponível: ${product.stock}`,
-        );
-      }
 
       await this.prisma.cartItem.update({
         where: { id: existingItem.id },
         data: { quantity: newQuantity },
       });
     } else {
+      // Para novos itens, verifica se há estoque suficiente
+      this.validateStock(product, quantity, 'adicionar');
+
       // Cria um novo item no carrinho
       await this.prisma.cartItem.create({
         data: {
@@ -116,10 +137,9 @@ export class CartService {
     const product = await this.productsService.findOne(cartItem.productId);
     const quantityDifference = quantity - cartItem.quantity;
 
-    if (product.stock < quantityDifference) {
-      throw new BadRequestException(
-        `Estoque insuficiente para o produto ${product.name}. Disponível: ${product.stock}`,
-      );
+    // Se está tentando aumentar a quantidade
+    if (quantityDifference > 0) {
+      this.validateStock(product, quantityDifference, `alterar de ${cartItem.quantity} para ${quantity} (adicionar ${quantityDifference})`);
     }
 
     await this.prisma.cartItem.update({
