@@ -1,8 +1,6 @@
-import { Controller, Get, Post, Body, Param, Patch, Delete, HttpCode, HttpStatus } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { OrdersService } from './orders.service';
-import { CreateOrderDto } from './dto/create-order.dto';
-import { UpdateOrderItemDto } from './dto/update-order-item.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam } from '@nestjs/swagger';
 import { Order } from './entities/order.entity';
 
 @ApiTags('orders')
@@ -10,19 +8,8 @@ import { Order } from './entities/order.entity';
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}
 
-  @Post()
-  @ApiOperation({ summary: 'Criar um novo pedido' })
-  @ApiResponse({
-    status: 201,
-    description: 'Pedido criado com sucesso',
-    type: Order,
-  })
-  create(@Body() createOrderDto: CreateOrderDto) {
-    return this.ordersService.create(createOrderDto);
-  }
-
   @Get()
-  @ApiOperation({ summary: 'Listar todos os pedidos' })
+  @ApiOperation({ summary: 'Listar todos os pedidos finalizados' })
   @ApiResponse({
     status: 200,
     description: 'Lista de pedidos retornada com sucesso',
@@ -38,6 +25,11 @@ export class OrdersController {
 
   @Get(':id')
   @ApiOperation({ summary: 'Buscar um pedido pelo ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID único do pedido',
+    example: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6',
+  })
   @ApiResponse({
     status: 200,
     description: 'Pedido encontrado com sucesso',
@@ -48,88 +40,6 @@ export class OrdersController {
     description: 'Pedido não encontrado',
   })
   findOne(@Param('id') id: string) {
-    return this.ordersService.findOne(+id);
+    return this.ordersService.findOne(id);
   }
-
-  @Patch(':orderId/items/:itemId')
-  @ApiOperation({ summary: 'Atualizar quantidade de um item no carrinho' })
-  @ApiResponse({
-    status: 200,
-    description: 'Item atualizado com sucesso',
-    type: Order,
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pedido ou item não encontrado',
-  })
-  @ApiResponse({
-    status: 400,
-    description: 'Quantidade inválida ou estoque insuficiente',
-  })
-  updateOrderItem(
-    @Param('orderId') orderId: string,
-    @Param('itemId') itemId: string,
-    @Body() updateOrderItemDto: UpdateOrderItemDto,
-  ) {
-    return this.ordersService.updateOrderItem(+orderId, +itemId, updateOrderItemDto);
-  }
-
-  @Delete(':orderId/items/:itemId')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Remover um item do carrinho' })
-  @ApiResponse({
-    status: 204,
-    description: 'Item removido com sucesso',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pedido ou item não encontrado',
-  })
-  removeOrderItem(
-    @Param('orderId') orderId: string,
-    @Param('itemId') itemId: string,
-  ) {
-    return this.ordersService.removeOrderItem(+orderId, +itemId);
-  }
-
-  @Delete(':orderId/clear')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Limpar o carrinho (remover todos os itens)' })
-  @ApiResponse({
-    status: 204,
-    description: 'Carrinho limpo com sucesso',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pedido não encontrado',
-  })
-  clearCart(@Param('orderId') orderId: string) {
-    return this.ordersService.clearCart(+orderId);
-  }
-
-  @Delete(':orderId')
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Excluir um pedido específico' })
-  @ApiResponse({
-    status: 204,
-    description: 'Pedido excluído com sucesso',
-  })
-  @ApiResponse({
-    status: 404,
-    description: 'Pedido não encontrado',
-  })
-  async deleteOrder(@Param('orderId') orderId: string) {
-    await this.ordersService.deleteOrder(+orderId);
-  }
-
-  @Delete()
-  @HttpCode(HttpStatus.NO_CONTENT)
-  @ApiOperation({ summary: 'Excluir todos os pedidos' })
-  @ApiResponse({
-    status: 204,
-    description: 'Todos os pedidos foram excluídos com sucesso',
-  })
-  async deleteAllOrders() {
-    await this.ordersService.deleteAllOrders();
-  }
-}
+} 

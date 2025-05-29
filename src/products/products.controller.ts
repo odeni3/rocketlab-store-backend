@@ -8,11 +8,13 @@ import {
   Delete,
   HttpCode,
   HttpStatus,
+  Query,
 } from '@nestjs/common';
 import { ProductsService } from './products.service';
 import { CreateProductDto } from './dto/create-product.dto';
-import { ApiTags, ApiOperation, ApiResponse } from '@nestjs/swagger';
+import { ApiTags, ApiOperation, ApiResponse, ApiParam, ApiQuery } from '@nestjs/swagger';
 import { Product } from './entities/product.entity';
+import { ProductCategory } from './enums/product-category.enum';
 
 @ApiTags('products')
 @Controller('products')
@@ -42,8 +44,28 @@ export class ProductsController {
     return this.productsService.findAll();
   }
 
+  @Get('category/:category')
+  @ApiOperation({ summary: 'Buscar produtos disponíveis por categoria' })
+  @ApiResponse({
+    status: 200,
+    description: 'Lista de produtos da categoria retornada com sucesso',
+    type: [Product],
+  })
+  @ApiResponse({
+    status: 400,
+    description: 'Categoria inválida',
+  })
+  findByCategory(@Param('category') category: string) {
+    return this.productsService.findAvailableByCategory(category);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Buscar um produto pelo ID' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID único do produto',
+    example: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6',
+  })
   @ApiResponse({
     status: 200,
     description: 'Produto encontrado com sucesso',
@@ -54,11 +76,16 @@ export class ProductsController {
     description: 'Produto não encontrado',
   })
   async findOne(@Param('id') id: string) {
-    return this.productsService.findOne(+id);
+    return this.productsService.findOne(id);
   }
 
   @Patch(':id')
   @ApiOperation({ summary: 'Atualizar um produto' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID único do produto',
+    example: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6',
+  })
   @ApiResponse({
     status: 200,
     description: 'Produto atualizado com sucesso',
@@ -69,12 +96,17 @@ export class ProductsController {
     description: 'Produto não encontrado',
   })
   update(@Param('id') id: string, @Body() updateProductDto: CreateProductDto) {
-    return this.productsService.update(+id, updateProductDto);
+    return this.productsService.update(id, updateProductDto);
   }
 
   @Delete(':id')
   @HttpCode(HttpStatus.NO_CONTENT)
   @ApiOperation({ summary: 'Remover um produto' })
+  @ApiParam({
+    name: 'id',
+    description: 'ID único do produto',
+    example: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6',
+  })
   @ApiResponse({
     status: 204,
     description: 'Produto removido com sucesso',
@@ -84,6 +116,6 @@ export class ProductsController {
     description: 'Produto não encontrado',
   })
   remove(@Param('id') id: string) {
-    return this.productsService.remove(+id);
+    return this.productsService.remove(id);
   }
 }
