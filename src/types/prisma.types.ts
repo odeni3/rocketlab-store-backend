@@ -5,6 +5,17 @@ import { Order } from '../orders/entities/order.entity';
 import { Product as PrismaProduct } from '@prisma/client';
 import { ProductCategory } from '../products/enums/product-category.enum';
 
+export type PrismaCartWithUser = Prisma.CartGetPayload<{
+  include: {
+    items: {
+      include: {
+        product: true;
+      };
+    };
+    user: true;
+  };
+}>;
+
 export type PrismaCart = Prisma.CartGetPayload<{
   include: {
     items: {
@@ -12,6 +23,17 @@ export type PrismaCart = Prisma.CartGetPayload<{
         product: true;
       };
     };
+  };
+}>;
+
+export type PrismaOrderWithUser = Prisma.OrderGetPayload<{
+  include: {
+    items: {
+      include: {
+        product: true;
+      };
+    };
+    user: true;
   };
 }>;
 
@@ -38,22 +60,24 @@ export function mapPrismaProductToProduct(prismaProduct: PrismaProduct): Product
   return product;
 }
 
-export function mapPrismaCartToCart(prismaCart: PrismaCart): Cart {
+export function mapPrismaCartToCart(prismaCart: PrismaCart | PrismaCartWithUser): Cart {
   return {
     ...prismaCart,
     items: prismaCart.items.map(item => ({
       ...item,
       product: mapPrismaProductToProduct(item.product),
     })),
+    user: 'user' in prismaCart ? prismaCart.user : undefined,
   };
 }
 
-export function mapPrismaOrderToOrder(prismaOrder: PrismaOrder): Order {
+export function mapPrismaOrderToOrder(prismaOrder: PrismaOrder | PrismaOrderWithUser): Order {
   return {
     ...prismaOrder,
     items: prismaOrder.items.map(item => ({
       ...item,
       product: mapPrismaProductToProduct(item.product),
     })),
+    user: 'user' in prismaOrder ? prismaOrder.user : undefined,
   };
 } 

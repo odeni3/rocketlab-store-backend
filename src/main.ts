@@ -17,6 +17,7 @@ async function bootstrap() {
     .setTitle('Sistema de Compras Online')
     .setDescription('API para gerenciamento de produtos e pedidos')
     .setVersion('1.0')
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);

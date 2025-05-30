@@ -25,9 +25,9 @@ export class CartService {
   /**
    * Método de debug para verificar o status do estoque
    */
-  async debugStockStatus(productId: string): Promise<any> {
+  async debugStockStatus(productId: string, userId: string): Promise<any> {
     const product = await this.productsService.findOne(productId);
-    const cart = await this.getOrCreateActiveCart();
+    const cart = await this.getOrCreateActiveCart(userId);
     const itemInCart = cart.items.find(item => item.productId === productId);
     
     return {
@@ -38,10 +38,13 @@ export class CartService {
     };
   }
 
-  private async getOrCreateActiveCart(): Promise<Cart> {
-    // Procura por um carrinho ativo
+  private async getOrCreateActiveCart(userId: string): Promise<Cart> {
+    // Procura por um carrinho ativo do usuário
     let cart = await this.prisma.cart.findFirst({
-      where: { status: 'ACTIVE' },
+      where: { 
+        status: 'ACTIVE',
+        userId: userId 
+      },
       include: {
         items: {
           include: {
@@ -57,6 +60,7 @@ export class CartService {
         data: {
           status: 'ACTIVE',
           total: 0,
+          userId: userId,
         },
         include: {
           items: {
@@ -71,8 +75,8 @@ export class CartService {
     return mapPrismaCartToCart(cart);
   }
 
-  async addItem(productId: string, quantity: number): Promise<Cart> {
-    const cart = await this.getOrCreateActiveCart();
+  async addItem(productId: string, quantity: number, userId: string): Promise<Cart> {
+    const cart = await this.getOrCreateActiveCart(userId);
     const product = await this.productsService.findOne(productId);
 
     if (quantity <= 0) {
@@ -177,8 +181,8 @@ export class CartService {
     return this.recalculateCart(cartItem.cartId);
   }
 
-  async clear(): Promise<void> {
-    const cart = await this.getOrCreateActiveCart();
+  async clear(userId: string): Promise<void> {
+    const cart = await this.getOrCreateActiveCart(userId);
 
     // Restaura o estoque de todos os produtos
     for (const item of cart.items) {
@@ -199,8 +203,8 @@ export class CartService {
     });
   }
 
-  async checkout(): Promise<void> {
-    const cart = await this.getOrCreateActiveCart();
+  async checkout(userId: string): Promise<void> {
+    const cart = await this.getOrCreateActiveCart(userId);
 
     if (cart.items.length === 0) {
       throw new BadRequestException('O carrinho está vazio');
@@ -210,6 +214,7 @@ export class CartService {
     await this.prisma.order.create({
       data: {
         total: cart.total,
+        userId: userId,
         items: {
           create: cart.items.map(item => ({
             quantity: item.quantity,
@@ -268,7 +273,7 @@ export class CartService {
     return mapPrismaCartToCart(updatedCart);
   }
 
-  async getCart(): Promise<Cart> {
-    return this.getOrCreateActiveCart();
+  async getCart(userId: string): Promise<Cart> {
+    return this.getOrCreateActiveCart(userId);
   }
 } 

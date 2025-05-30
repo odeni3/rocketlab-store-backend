@@ -1,5 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { Product } from '../../products/entities/product.entity';
+import { User } from '../../auth/entities/user.entity';
 
 export class OrderItem {
   @ApiProperty({
@@ -58,6 +59,18 @@ export class Order {
     example: 1999.98
   })
   total: number;
+
+  @ApiProperty({
+    description: 'ID do usuário que fez o pedido',
+    example: 'a1b2c3d4-e5f6-g7h8-i9j0-k1l2m3n4o5p6'
+  })
+  userId: string;
+
+  @ApiProperty({
+    description: 'Usuário que fez o pedido',
+    type: () => User
+  })
+  user?: User;
 
   @ApiProperty({
     description: 'Data de criação do pedido'
