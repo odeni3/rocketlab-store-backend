@@ -14,36 +14,24 @@ export class CartService {
   /**
    * Valida se há estoque suficiente para uma operação
    */
-  private validateStock(product: any, requestedQuantity: number, operation: string = 'adicionar'): void {
+  private validateStock(
+    product: any,
+    requestedQuantity: number,
+    operation: string = 'adicionar',
+  ): void {
     if (product.stock < requestedQuantity) {
       throw new BadRequestException(
-        `Estoque insuficiente para o produto ${product.name}. Disponível: ${product.stock}, tentando ${operation}: ${requestedQuantity}`,
+        `Estoque insuficiente para ${operation} ${requestedQuantity} unidade(s) de ${product.name}. Estoque disponível: ${product.stock}`,
       );
     }
-  }
-
-  /**
-   * Método de debug para verificar o status do estoque
-   */
-  async debugStockStatus(productId: string, userId: string): Promise<any> {
-    const product = await this.productsService.findOne(productId);
-    const cart = await this.getOrCreateActiveCart(userId);
-    const itemInCart = cart.items.find(item => item.productId === productId);
-    
-    return {
-      productName: product.name,
-      currentStock: product.stock,
-      quantityInCart: itemInCart ? itemInCart.quantity : 0,
-      available: product.stock,
-    };
   }
 
   private async getOrCreateActiveCart(userId: string): Promise<Cart> {
     // Procura por um carrinho ativo do usuário
     let cart = await this.prisma.cart.findFirst({
-      where: { 
+      where: {
         status: 'ACTIVE',
-        userId: userId 
+        userId: userId,
       },
       include: {
         items: {
@@ -86,7 +74,7 @@ export class CartService {
     }
 
     // Verifica se o item já existe no carrinho
-    const existingItem = cart.items.find(item => item.productId === productId);
+    const existingItem = cart.items.find((item) => item.productId === productId);
 
     if (existingItem) {
       // Para itens existentes, verifica se há estoque suficiente para a quantidade adicional
@@ -143,7 +131,11 @@ export class CartService {
 
     // Se está tentando aumentar a quantidade
     if (quantityDifference > 0) {
-      this.validateStock(product, quantityDifference, `alterar de ${cartItem.quantity} para ${quantity} (adicionar ${quantityDifference})`);
+      this.validateStock(
+        product,
+        quantityDifference,
+        `alterar de ${cartItem.quantity} para ${quantity} (adicionar ${quantityDifference})`,
+      );
     }
 
     await this.prisma.cartItem.update({
@@ -216,7 +208,7 @@ export class CartService {
         total: cart.total,
         userId: userId,
         items: {
-          create: cart.items.map(item => ({
+          create: cart.items.map((item) => ({
             quantity: item.quantity,
             price: item.price,
             productId: item.productId,
@@ -253,10 +245,7 @@ export class CartService {
       throw new NotFoundException(`Carrinho não encontrado`);
     }
 
-    const total = cart.items.reduce(
-      (sum, item) => sum + item.quantity * item.price,
-      0,
-    );
+    const total = cart.items.reduce((sum, item) => sum + item.quantity * item.price, 0);
 
     const updatedCart = await this.prisma.cart.update({
       where: { id: cartId },
@@ -276,4 +265,4 @@ export class CartService {
   async getCart(userId: string): Promise<Cart> {
     return this.getOrCreateActiveCart(userId);
   }
-} 
+}

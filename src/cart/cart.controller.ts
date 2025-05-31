@@ -117,18 +117,4 @@ export class CartController {
   checkout(@Request() req) {
     return this.cartService.checkout(req.user.id);
   }
-
-  @Get('debug/stock/:productId')
-  @ApiOperation({ summary: 'Debug - Verificar status do estoque de um produto (admin/user)' })
-  @ApiResponse({
-    status: 200,
-    description: 'Status do estoque retornado com sucesso',
-  })
-  @ApiResponse({
-    status: 401,
-    description: 'Token inválido ou expirado',
-  })
-  debugStock(@Param('productId') productId: string, @Request() req) {
-    return this.cartService.debugStockStatus(productId, req.user.id);
-  }
-} 
+}
