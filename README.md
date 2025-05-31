@@ -24,6 +24,7 @@ Uma API completa de e-commerce construída com NestJS, TypeScript e Prisma, ofer
 ## 🚀 Como Rodar o Projeto
 
 ### 1. Clone e Instale
+
 ```bash
 git clone https://github.com/odeni3/rocketlab-store-backend.git
 cd backendrocket
@@ -31,32 +32,41 @@ npm install
 ```
 
 ### 2. Configure o Banco de Dados
+
 ```bash
 npx prisma migrate dev
+
+# Popular o banco com dados iniciais (seed)
+npm run db:seed
 ```
 
 ### 3. Inicie o Servidor
+
 ```bash
 npm run start:dev
 ```
 
 ### 4. Acesse a Documentação
+
 Abra seu navegador em: **http://localhost:3000/api**
 
 ## 🔑 Sistema de Autenticação
 
 ### Como Funciona
+
 1. **Registro**: Crie uma conta com email e senha
 2. **Login**: Receba um token JWT válido
 3. **Uso**: Adicione o token gerado no login no header `Authorization: Bearer <token>` (cadeado no canto direito de cada rota)
 
 ### Roles de Usuário
+
 - **USER**: Pode comprar, gerenciar carrinho e ver seus pedidos
 - **ADMIN**: Pode gerenciar produtos e ver todos os pedidos\
 
 ### Exemplo de Uso
 
 #### 1. Registrar Usuário
+
 ```bash
 POST /auth/register
 {
@@ -68,6 +78,7 @@ POST /auth/register
 ```
 
 #### 2. Fazer Login
+
 ```bash
 POST /auth/login
 {
@@ -77,6 +88,7 @@ POST /auth/login
 ```
 
 **Resposta:**
+
 ```json
 {
   "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
@@ -90,6 +102,7 @@ POST /auth/login
 ```
 
 #### 3. Usar Token nas Requisições
+
 ```bash
 GET /cart
 Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
@@ -98,6 +111,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 ## 🛡️ Tipos de Endpoints
 
 ### 🌐 Públicos (sem autenticação)
+
 - `GET /` - Status da API
 - `POST /auth/register` - Registrar usuário
 - `POST /auth/login` - Fazer login
@@ -105,6 +119,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - `GET /products/category/{category}` - Produtos por categoria
 
 ### 👤 Autenticados (admin/user)
+
 - `GET /auth/profile` - Perfil do usuário
 - `GET /cart` - Obter carrinho
 - `POST /cart/items` - Adicionar ao carrinho
@@ -116,6 +131,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - `GET /orders/my-orders/{id}` - Meu pedido específico
 
 ### 👑 Administrativos (apenas admin)
+
 - `POST /products` - Criar produto
 - `GET /products/{id}` - Buscar produto por ID
 - `PATCH /products/{id}` - Atualizar produto
@@ -126,6 +142,7 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 - `GET /orders/{id}` - Qualquer pedido por ID
 
 ### Códigos de Erro Comuns
+
 - **401 Unauthorized** - Token inválido ou ausente
 - **403 Forbidden** - Sem permissão (ex: user tentando acessar admin)
 - **404 Not Found** - Produto/pedido não encontrado
@@ -133,33 +150,38 @@ Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
 > **🔒 Nota de Segurança:** A rota `/auth/users` retorna informações dos usuários **sem as senhas**, que são automaticamente removidas por segurança. Apenas administradores podem acessar essa informação.
 
-### Prisma Studio
+## 🌱 Dados de Seed
+
+O sistema vem com dados pré-configurados para facilitar os testes:
+
+### 👥 Usuários
+
+- **Admin**: admin@rocketlab.com / admin123
+- **User**: user@teste.com / user123
+
+### 📦 Produtos
+
+- Smartphone Samsung Galaxy S23 - R$ 2.899,99 (15 em estoque)
+- Notebook Dell Inspiron 15 - R$ 3.299,00 (8 em estoque)
+- Fone de Ouvido Sony WH-1000XM4 - R$ 1.499,90 (25 em estoque)
+
+## 🗄️ Scripts do Banco
+
 ```bash
+# Popular o banco com dados iniciais
+npm run db:seed
+
+# Resetar e popular o banco (limpa tudo e adiciona os dados de seed)
+npm run db:reset
+
+# Ver o banco de dados no navegador
 npx prisma studio
 ```
-Interface visual para explorar o banco de dados.
-
-## 📊 Cenários de Teste
-
-### Cenário 1: Cliente Comum
-1. Navega produtos sem login
-2. Registra-se como USER
-3. Adiciona produtos ao carrinho
-4. Finaliza compra
-5. Consulta histórico de pedidos
-
-### Cenário 2: Administrador
-1. Registra-se como ADMIN
-2. Cria novos produtos
-3. Gerencia estoque
-4. Visualiza todos os usuários do sistema
-5. Monitora todos os pedidos
-6. Busca pedidos de usuários específicos
-7. Acessa dados administrativos
 
 ## 🔧 Troubleshooting (Windows)
 
 ### Erro do Prisma "operation not permitted"
+
 Se encontrar erro de permissão ao executar `npx prisma generate`:
 
 ```bash
