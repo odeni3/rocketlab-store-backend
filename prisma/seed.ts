@@ -49,7 +49,7 @@ async function main(): Promise<void> {
         'Smartphone Android com 128GB de armazenamento, câmera tripla de 50MP e tela AMOLED de 6.1 polegadas.',
       price: 2899.99,
       stock: 15,
-      category: 'Eletrônicos',
+      category: 'Dispositivos de Mídia',
     },
     {
       name: 'Notebook Dell Inspiron 15',
@@ -57,7 +57,7 @@ async function main(): Promise<void> {
         'Notebook com processador Intel Core i5, 8GB RAM, SSD 256GB e tela Full HD de 15.6 polegadas.',
       price: 3299.0,
       stock: 8,
-      category: 'Informática',
+      category: 'Computadores e Notebooks',
     },
     {
       name: 'Fone de Ouvido Sony WH-1000XM4',
@@ -65,7 +65,7 @@ async function main(): Promise<void> {
         'Fone de ouvido wireless com cancelamento de ruído ativo, bateria de 30 horas e alta qualidade de áudio.',
       price: 1499.9,
       stock: 25,
-      category: 'Áudio',
+      category: 'Periféricos',
     },
   ];
 

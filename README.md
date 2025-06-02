@@ -10,6 +10,7 @@ Uma API completa de e-commerce construída com NestJS, TypeScript e Prisma, ofer
 - **📋 Histórico de Pedidos** - Separado por usuário
 - **🛡️ Controle de Acesso** - Rotas públicas, autenticadas e administrativas
 - **📚 Documentação Swagger** - Interface interativa para testar a API
+- **🧪 Testes Unitários** - Cobertura abrangente com Jest
 
 ## 💻 Tecnologias
 
@@ -20,6 +21,7 @@ Uma API completa de e-commerce construída com NestJS, TypeScript e Prisma, ofer
 - **JWT** - Autenticação segura com tokens
 - **Swagger** - Documentação interativa da API
 - **Bcrypt** - Criptografia de senhas
+- **Jest** - Framework de testes unitários
 
 ## 🚀 Como Rodar o Projeto
 
@@ -27,7 +29,7 @@ Uma API completa de e-commerce construída com NestJS, TypeScript e Prisma, ofer
 
 ```bash
 git clone https://github.com/odeni3/rocketlab-store-backend.git
-cd backendrocket
+cd rocketlab-store-backend
 npm install
 ```
 
@@ -49,6 +51,44 @@ npm run start:dev
 ### 4. Acesse a Documentação
 
 Abra seu navegador em: **http://localhost:3000/api**
+
+## 🧪 Testes
+
+### Executar Testes
+
+```bash
+# Executar todos os testes
+npm test
+
+# Executar testes com relatório de cobertura
+npm run test:cov
+
+# Executar testes em modo watch (desenvolvimento)
+npm run test:watch
+```
+
+### Cobertura de Testes
+
+O projeto possui **46 testes unitários** cobrindo os principais serviços:
+
+- ✅ **AuthService** - Autenticação e gestão de usuários
+- ✅ **ProductsService** - CRUD de produtos e validações
+- ✅ **CartService** - Gestão de carrinho e estoque
+- ✅ **OrdersService** - Histórico de pedidos
+- ✅ **AppController** - Endpoint básico da aplicação
+
+**Cobertura atual**: ~39% das linhas de código testadas
+
+### Estrutura dos Testes
+
+```
+src/
+├── auth/auth.service.spec.ts          # Testes de autenticação
+├── products/products.service.spec.ts  # Testes de produtos
+├── cart/cart.service.spec.ts          # Testes de carrinho
+├── orders/orders.service.spec.ts      # Testes de pedidos
+└── app.controller.spec.ts             # Teste básico da aplicação
+```
 
 ## 🔑 Sistema de Autenticação
 
